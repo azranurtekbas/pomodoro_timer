@@ -1,3 +1,4 @@
 # pomodoro_timer
 
-başlandı
+başland
+hala baslaniyor
