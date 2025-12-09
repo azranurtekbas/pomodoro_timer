@@ -2,3 +2,4 @@
 
 başland
 hala baslaniyor
+kafayi yicem simdi
