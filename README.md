@@ -7,3 +7,4 @@ kesin 0 alicam
 yeter gitmek istiyorum
 oh sukue gudiyoz
 geldik
+o kadar yorgunum ki
