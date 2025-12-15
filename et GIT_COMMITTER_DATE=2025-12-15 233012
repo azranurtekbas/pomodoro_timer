@@ -1,0 +1,81 @@
+[33mcommit 109948461b3513b59476dd99908acf3631699c84[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: azranurtekbas <azranurtekbas@gmail.com>
+Date:   Thu Dec 4 12:00:00 2025 +0300
+
+    Repo oluşturuldu
+
+[33mcommit 678f8406a9ea65dfb1bdd55122d4938cb8e0d88b[m
+Author: azranurtekbas <azranurtekbas@gmail.com>
+Date:   Mon Dec 15 12:00:00 2025 +0300
+
+    Add background return notification and continue/reset prompt
+
+[33mcommit 52ec4987d6e631481a3b994c58d97b198c6071b9[m
+Author: azranurtekbas <azranurtekbas@gmail.com>
+Date:   Mon Dec 15 14:32:25 2025 +0300
+
+    odevin genel iskelet yapısı kuruldu
+
+[33mcommit 69981921cddfc5d237f054e5bc7218b6ccd2abfd[m
+Author: Azra Nur Tekbaş <133056323+azranurtekbas@users.noreply.github.com>
+Date:   Sun Dec 14 20:47:29 2025 +0300
+
+    Add expression of tiredness to README
+    
+    Add a new line expressing exhaustion.
+
+[33mcommit 284abe0f9872d9e65c0f7848f3ff840639c56798[m
+Author: Azra Nur Tekbaş <133056323+azranurtekbas@users.noreply.github.com>
+Date:   Sat Dec 13 12:17:37 2025 +0300
+
+    Add ' to the README
+
+[33mcommit 13e024896833afd564ace46116d2132ee27cd0e1[m
+Author: Azra Nur Tekbaş <133056323+azranurtekbas@users.noreply.github.com>
+Date:   Fri Dec 12 08:37:26 2025 +0100
+
+    Add new line about
+
+[33mcommit ef8c5f2941806b86517baf5345a226984bf77139[m
+Author: Azra Nur Tekbaş <133056323+azranurtekbas@users.noreply.github.com>
+Date:   Thu Dec 11 14:40:45 2025 +0100
+
+    Add a line expressing desire to leave
+
+[33mcommit 709e5927751177b69ed3abe39c5013e30059d34b[m
+Author: Azra Nur Tekbaş <133056323+azranurtekbas@users.noreply.github.com>
+Date:   Wed Dec 10 21:20:34 2025 +0100
+
+    Add new line about getting a score of 0
+
+[33mcommit 6d8c9459ae4660e211f557ac039ea22ab545db72[m
+Author: Azra Nur Tekbaş <133056323+azranurtekbas@users.noreply.github.com>
+Date:   Tue Dec 9 22:15:36 2025 +0100
+
+    Update README with additional text
+
+[33mcommit 4a231131c122406933a9c18e332ca89a16287721[m
+Author: Azra Nur Tekbaş <133056323+azranurtekbas@users.noreply.github.com>
+Date:   Mon Dec 8 15:24:19 2025 +0300
+
+    Fix typos in README.md
+
+[33mcommit c4c712d32ee330c6478c156f92d1c7b92338548f[m
+Author: Azra Nur Tekbaş <133056323+azranurtekbas@users.noreply.github.com>
+Date:   Sat Dec 6 22:22:33 2025 +0300
+
+    first commit
+
+[33mcommit 59203313d55f0a6bab65e8a8782fecb64cb64906[m
+Author: Azra Nur Tekbaş <133056323+azranurtekbas@users.noreply.github.com>
+Date:   Fri Dec 5 22:22:02 2025 +0300
+
+    Update README with additional line
+    
+    Added a new line with the word 'başlandı' to the README.
+
+[33mcommit e5e7e2e3cb0ff897e694fa9138a8aaf34f2a4cb8[m
+Author: Azra Nur Tekbaş <133056323+azranurtekbas@users.noreply.github.com>
+Date:   Fri Dec 5 22:21:36 2025 +0300
+
+    Initial commit

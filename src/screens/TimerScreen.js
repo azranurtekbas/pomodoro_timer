@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import * as Notifications from 'expo-notifications';
 import {
   View,
   Text,
@@ -25,11 +26,31 @@ const TimerScreen = () => {
   const intervalRef = useRef(null);
   const appState = useRef(AppState.currentState);
   const sessionStartTime = useRef(null);
+  const scheduledNotificationId = useRef(null);
 
   // AppState listener for distraction tracking
   useEffect(() => {
     const subscription = AppState.addEventListener('change', handleAppStateChange);
-    
+
+    // Request notification permission and set handler
+    (async () => {
+      try {
+        await Notifications.requestPermissionsAsync();
+      } catch (e) {
+        console.warn('Notification permission request failed', e);
+      }
+    })();
+
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+        shouldShowBanner: true,
+        shouldShowList: true,
+      }),
+    });
+
     return () => {
       subscription.remove();
     };
@@ -60,27 +81,92 @@ const TimerScreen = () => {
     };
   }, [isRunning, timeLeft]);
 
-  const handleAppStateChange = (nextAppState) => {
-    if (isRunning) {
-      if (
-        appState.current.match(/active/) &&
-        nextAppState.match(/inactive|background/)
-      ) {
-        // User left the app - count as distraction
-        setDistractionCount((prev) => prev + 1);
-        setIsRunning(false);
+  const cancelScheduledNotification = async () => {
+    if (scheduledNotificationId.current) {
+      try {
+        await Notifications.cancelScheduledNotificationAsync(scheduledNotificationId.current);
+      } catch (e) {
+        console.warn('Failed to cancel scheduled notification', e);
+      }
+      scheduledNotificationId.current = null;
+    }
+  };
+
+  const scheduleNotification = async (body, seconds = 5) => {
+    await cancelScheduledNotification();
+    try {
+      // Check permissions first
+      const perms = await Notifications.getPermissionsAsync();
+      if (!perms.granted && !perms.ios?.status === 'granted') {
+        const req = await Notifications.requestPermissionsAsync();
+        if (!req.granted) {
+          console.warn('Notification permission not granted');
+          if (__DEV__) Alert.alert('Bildirim izni yok', 'Lütfen bildirim izinlerini etkinleştirin.');
+          return;
+        }
+      }
+
+      const id = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: 'Sayaç duraklatıldı',
+          body,
+          data: { type: 'paused' },
+        },
+        trigger: { seconds },
+      });
+      scheduledNotificationId.current = id;
+      console.log('Scheduled notification id:', id);
+      if (__DEV__) Alert.alert('Bildirim planlandı', `ID: ${id} — ${seconds}s sonra gösterilecek`);
+    } catch (e) {
+      console.warn('Failed to schedule notification', e);
+      if (__DEV__) Alert.alert('Bildirim hata', String(e));
+    }
+  };
+
+  const handleAppStateChange = async (nextAppState) => {
+    // User leaves app while timer is running
+    if (isRunning && appState.current.match(/active/) && nextAppState.match(/inactive|background/)) {
+      setDistractionCount((prev) => prev + 1);
+      setIsRunning(false);
+
+      try {
+        const id = await Notifications.scheduleNotificationAsync({
+          content: {
+            title: 'Uygulamadan ayrıldınız',
+            body: 'Seans duraklatıldı. Geri döndüğünüzde devam etmek ister misiniz yoksa sıfırlamak mı?',
+            data: { type: 'paused-by-leave' },
+          },
+          trigger: { seconds: 5 },
+        });
+        scheduledNotificationId.current = id;
+      } catch (e) {
+        console.warn('Failed to schedule notification', e);
+      }
+    }
+
+    // User returns to app from background/inactive
+    if (appState.current.match(/inactive|background/) && nextAppState.match(/active/)) {
+      await cancelScheduledNotification();
+
+      if (!isRunning) {
         Alert.alert(
-          'Dikkat Dağınıklığı',
-          'Uygulamadan ayrıldınız. Sayaç duraklatıldı.',
-          [{ text: 'Tamam' }]
+          'Uygulamaya Dönüldü',
+          'Seansa devam etmek ister misiniz yoksa sıfırlamak mı?',
+          [
+            { text: 'Devam Et', onPress: () => setIsRunning(true) },
+            { text: 'Sıfırla', onPress: () => resetTimer(), style: 'destructive' },
+            { text: 'İptal', style: 'cancel' },
+          ]
         );
       }
     }
+
     appState.current = nextAppState;
   };
 
   const handleTimerComplete = async () => {
     setIsRunning(false);
+    await cancelScheduledNotification();
     const duration = Math.floor((customTime * 60 - timeLeft) / 60);
     setSessionDuration(duration);
     
@@ -104,19 +190,26 @@ const TimerScreen = () => {
     }
   };
 
-  const startTimer = () => {
+  const startTimer = async () => {
+    // Cancel any scheduled notifications when resuming
+    await cancelScheduledNotification();
     if (!isRunning) {
       sessionStartTime.current = Date.now();
       setIsRunning(true);
     }
   };
 
-  const pauseTimer = () => {
-    setIsRunning(false);
+  const pauseTimer = async () => {
+    if (isRunning) {
+      setIsRunning(false);
+      // Schedule a notification to remind the user after a short delay
+      await scheduleNotification('Seans duraklatıldı. Geri döndüğünüzde devam etmek ister misiniz yoksa sıfırlamak mı?');
+    }
   };
 
-  const resetTimer = () => {
+  const resetTimer = async () => {
     setIsRunning(false);
+    await cancelScheduledNotification();
     setTimeLeft(customTime * 60);
     setDistractionCount(0);
     sessionStartTime.current = null;
@@ -124,6 +217,7 @@ const TimerScreen = () => {
 
   const stopAndSave = async () => {
     setIsRunning(false);
+    await cancelScheduledNotification();
     const duration = Math.floor((customTime * 60 - timeLeft) / 60);
     setSessionDuration(duration);
     await saveSession(duration);
